@@ -35,6 +35,16 @@ app.use(
 // Static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+    database: process.env.DATABASE_URL ? "configured" : "not configured"
+  });
+});
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
