@@ -10,7 +10,7 @@
     "lint": "eslint --ext .ts .",
     "postinstall": "prisma generate",
     "seed": "ts-node prisma/seed.ts",
-    "vercel-build": "prisma generate && tsc"
+    "vercel-build": "prisma generate && prisma migrate deploy && npm run build"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

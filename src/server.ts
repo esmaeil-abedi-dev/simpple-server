@@ -82,9 +82,12 @@ app.use(
   }
 );
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+// Start the server only in development mode
+// In production (on Vercel), the server will be imported by api/index.js
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  });
+}
 
 export default app;
