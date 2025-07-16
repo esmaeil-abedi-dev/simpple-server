@@ -2,7 +2,7 @@
 // It imports the compiled TypeScript server from the dist directory
 
 // Import the compiled Express app
-const app = require('../dist/server').default;
+const app = require("../dist/server").default;
 
 // Export the app for Vercel
 module.exports = app;
