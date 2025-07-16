@@ -37,11 +37,19 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     status: "ok",
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV,
-    database: process.env.DATABASE_URL ? "configured" : "not configured"
+    database: process.env.DATABASE_URL ? "configured" : "not configured",
+  });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Simpple Server API is running",
+    version: "1.0.0",
   });
 });
 
