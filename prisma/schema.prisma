@@ -3,15 +3,17 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+  directUrl = env("POSTGRES_URL")
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   username  String
   email     String   @unique
   password  String
@@ -23,7 +25,7 @@ model User {
 }
 
 model Category {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(uuid())
   name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -31,30 +33,30 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String     @id @default(uuid())
   name        String
   description String
   price       Float
   image       String?
-  quantity    Int       @default(0)
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  String    @db.ObjectId
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  quantity    Int        @default(0)
+  category    Category   @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   reviews     Review[]
   orderItems  OrderItem[]
-  rating      Float     @default(0)
-  numReviews  Int       @default(0)
+  rating      Float      @default(0)
+  numReviews  Int        @default(0)
 }
 
 model Review {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   rating    Int
   comment   String?
   user      User     @relation(fields: [userId], references: [id])
-  userId    String   @db.ObjectId
+  userId    String
   product   Product  @relation(fields: [productId], references: [id])
-  productId String   @db.ObjectId
+  productId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -62,34 +64,28 @@ model Review {
 }
 
 model Order {
-  id               String     @id @default(auto()) @map("_id") @db.ObjectId
-  user             User       @relation(fields: [userId], references: [id])
-  userId           String     @db.ObjectId
-  orderItems       OrderItem[]
-  shippingAddress  Address
-  paymentMethod    String
-  totalPrice       Float      @default(0)
-  isPaid           Boolean    @default(false)
-  paidAt           DateTime?
-  isDelivered      Boolean    @default(false)
-  deliveredAt      DateTime?
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  id              String      @id @default(uuid())
+  user            User        @relation(fields: [userId], references: [id])
+  userId          String
+  orderItems      OrderItem[]
+  shippingAddress Json
+  paymentMethod   String
+  totalPrice      Float       @default(0)
+  isPaid          Boolean     @default(false)
+  paidAt          DateTime?
+  isDelivered     Boolean     @default(false)
+  deliveredAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model OrderItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   name      String
   qty       Int
   price     Float
   product   Product  @relation(fields: [productId], references: [id])
-  productId String   @db.ObjectId
+  productId String
   order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String   @db.ObjectId
-}
-
-type Address {
-  address    String
-  city       String
-  postalCode String
+  orderId   String
 }

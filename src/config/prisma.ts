@@ -6,27 +6,26 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-// Create a singleton instance of PrismaClient
-const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "info", "warn", "error"]
-        : ["error"],
-  });
+// Create PrismaClient instance
+const prisma = global.prisma || new PrismaClient({
+  datasourceUrl: process.env.NODE_ENV === "production" 
+    ? process.env.PRISMA_DATABASE_URL 
+    : process.env.POSTGRES_URL,
+  log: process.env.NODE_ENV === "development"
+    ? ["query", "info", "warn", "error"]
+    : ["error"],
+});
 
-// Save the PrismaClient in global object in development to prevent multiple instances
+// Save PrismaClient in global object in development
 if (process.env.NODE_ENV === "development") {
   global.prisma = prisma;
 }
 
 // Handle connection errors
 if (process.env.NODE_ENV !== "production") {
-  prisma
-    .$connect()
+  prisma.$connect()
     .then(() => {
-      console.log("Successfully connected to the database");
+      console.log("Successfully connected to PostgreSQL database");
     })
     .catch((error: Error) => {
       console.error("Failed to connect to the database:", error);
